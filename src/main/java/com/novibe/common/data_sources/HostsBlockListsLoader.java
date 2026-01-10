@@ -8,6 +8,8 @@ import java.util.stream.Stream;
 @Service
 public class HostsBlockListsLoader extends ListLoader<String> {
 
+    private static final String[] BLOCK_PREFIXES = { "0.0.0.0 ", "127.0.0.1 "};
+
     @Override
     protected Stream<String> lineParser(String urlList) {
         return Pattern.compile("\\r?\\n").splitAsStream(urlList)
@@ -15,9 +17,18 @@ public class HostsBlockListsLoader extends ListLoader<String> {
                 .map(String::strip)
                 .filter(str -> !str.isBlank())
                 .filter(line -> !line.startsWith("#"))
-                .filter(line -> line.startsWith("0.0.0.0 "))
-                .map(line -> line.replace("0.0.0.0 ", ""))
+                .filter(line -> line.startsWith(BLOCK_PREFIXES[0]) || line.startsWith(BLOCK_PREFIXES[1]))
+                .map(this::removeIp)
                 .map(String::toLowerCase);
+    }
+
+    private String removeIp(String line) {
+        for (String blockPrefix : BLOCK_PREFIXES) {
+            if (line.startsWith(blockPrefix)) {
+                return line.substring(blockPrefix.length() - 1);
+            }
+        }
+        return line;
     }
 
     @Override

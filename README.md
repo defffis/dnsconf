@@ -66,9 +66,9 @@ https://first.com/hosts,https://second.com/hosts
 ### 1) Setup Redirects
 Set sources to **environment variable** `REDIRECT`
 
-Script will parce sources, filtering out redirects to `0.0.0.0`
+Script will parse sources, filtering out redirects to `0.0.0.0`
 
-Thus, parcing lines:
+Thus, parsing lines:
 
     0.0.0.0 domain.to.block
     1.2.3.4 domain.to.redirect
@@ -82,13 +82,13 @@ will keep only `1.2.3.4 domain.to.redirect` for the further redirect processing.
 ### 2) Setup Blocklist
 Set sources to **environment variable** `BLOCK`
 
-Script will parce sources, keeping only redirects to `0.0.0.0` and domains without any IP.
+Script will parse sources, keeping only redirects to `0.0.0.0` and `127.0.0.1`.
 
-Thus, parcing lines
+Thus, parsing lines
 
     0.0.0.0 domain.to.block
     1.2.3.4 domain.to.redirect
-    another.to.block
+    127.0.0.1 another.to.block
 
 will keep only `domain.to.block` and `another.to.block` for the further block processing.
 
