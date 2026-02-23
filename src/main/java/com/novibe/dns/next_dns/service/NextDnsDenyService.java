@@ -42,8 +42,6 @@ public class NextDnsDenyService {
         Log.io("Removing denylist from NextDNS");
         NextDnsRateLimitedApiProcessor.callApi(ids, nextDnsDenyClient::deleteDenyById);
     }
-
-}
     public void removeExcluded(Set<String> excludedDomains) {
         if (excludedDomains.isEmpty()) {
             return;
@@ -61,3 +59,4 @@ public class NextDnsDenyService {
         NextDnsRateLimitedApiProcessor.callApi(idsToDelete, nextDnsDenyClient::deleteDenyById);
     }
 
+}
