@@ -39,6 +39,10 @@ public class NextDnsTaskRunner implements DnsTaskRunner {
 
         List<String> blockSources = EnvParser.parse(BLOCK);
         var excludedDomains = EnvParser.parseExcludedDomains(EXCLUDE);
+
+        nextDnsDenyService.removeExcluded(excludedDomains);
+        nextDnsRewriteService.removeExcluded(excludedDomains);
+        
         if (!blockSources.isEmpty()) {
             Log.step("Obtain block lists from %s sources".formatted(blockSources.size()));
             List<String> blocks = blockListsLoader.fetchWebsites(blockSources, excludedDomains);
