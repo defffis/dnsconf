@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +28,27 @@ public class NextDnsDenyService {
                 .collect(Collectors.toSet());
         newDenyList.removeIf(existingDomainsSet::contains);
         return newDenyList;
+    }
+
+
+
+    public void removeExcluded(Set<String> excludedDomains) {
+        if (excludedDomains.isEmpty()) return;
+
+        Log.io("Fetching existing denylist from NextDNS");
+        List<DenyDto> existing = nextDnsDenyClient.fetchDenylist();
+        Predicate<String> excludedMatcher = domain -> excludedDomains.stream()
+                .anyMatch(excluded -> domain.equals(excluded) || domain.endsWith("." + excluded));
+
+        List<String> excludedIds = existing.stream()
+                .map(DenyDto::getId)
+                .filter(excludedMatcher)
+                .toList();
+
+        if (excludedIds.isEmpty()) return;
+
+        Log.io("Removing %s excluded denylist domains from NextDNS".formatted(excludedIds.size()));
+        NextDnsRateLimitedApiProcessor.callApi(excludedIds, nextDnsDenyClient::deleteDenyById);
     }
 
     public void saveDenyList(List<String> newDenylist) {
